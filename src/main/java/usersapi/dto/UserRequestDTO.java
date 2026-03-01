@@ -3,6 +3,7 @@ package usersapi.dto;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import usersapi.validation.AndresFormat;
+import usersapi.validation.RfcFormat;
 import usersapi.model.Address;
 import lombok.Data;
 import java.util.List;
@@ -23,6 +24,7 @@ public class UserRequestDTO {
     private String password;
 
     @NotBlank
+    @RfcFormat
     private String taxId;
     
     private List<Address> addresses;
