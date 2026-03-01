@@ -13,7 +13,7 @@ Una REST API para gestionar usuarios con validaciones, autenticación y operacio
 - Case-insensitive search
 - Unit tests completos
 
-## Tecnologias
+## Tecnologías
 
 - Java 17
 - Spring Boot 3
@@ -31,7 +31,7 @@ Una REST API para gestionar usuarios con validaciones, autenticación y operacio
 
 ## Como Correr el Proyecto
 
-### Opcion 1: Desde Terminal
+### Opción 1: Desde Terminal
 
 1. Clona el repositorio:
 ```bash
@@ -44,7 +44,7 @@ cd usersapi
 mvn clean compile
 ```
 
-3. Ejecuta la aplicacion:
+3. Ejecuta la aplicación:
 ```bash
 mvn spring-boot:run
 ```
@@ -176,18 +176,26 @@ GET /users?sortedBy=email&filter=name+co+juan
 - Debe tener formato valido de email
 - Ejemplo valido: `usuario@dominio.com`
 
-### Telefono
-- Debe contener exactamente 10 digitos
-- Puede incluir codigo de pais
+### Teléfono
+- Debe contener exactamente 10 dígitos
+- Puede incluir código de país
 - Ejemplos validos: `+1234567890`, `1234567890`
-- Ejemplos invalidos: `123`, `telefono`, `+123456`
+- Ejemplos inválidos: `123`, `telefono`, `+123456`
 
-### Campos Requeridos para Creacion
-- email (formato valido)
-- name (no vació)
-- phone (formato valido)
-- password (no vacio)
-- taxId (no vacio)
+### RFC (Tax ID)
+- Debe seguir formato estándar mexicano: XXXX000000XXX
+- Donde XXXX son las primeras 4 letras del apellido y nombre
+- 000000 es una fecha (AAMMDD)
+- XXX son 3 caracteres homoclave
+- Ejemplos validos: `AARR990101XXX`, `BOMM850101YYY`
+- Ejemplos inválidos: `123`, `RFC`, `AARR99XXX`
+
+### Campos Requeridos para Creación
+- email (formato válido)
+- name (no vacío)
+- phone (formato válido)
+- password (no vacío)
+- taxId (formato RFC válido: XXXX000000XXX)
 
 ## Tests
 
@@ -249,14 +257,14 @@ Todos tienen la misma contraseña encriptada para facilitar pruebas.
 - Los usuarios se almacenan en memoria (se reinician al reiniciar la aplicación)
 - La búsqueda es case-insensitive para mejor experiencia de usuario
 - Los campos de actualización son opcionales (solo se actualizan si se proporcionan)
-- La documentación se genera automaticamente y esta siempre sincronizada
+- La documentación se genera automáticamente y esta siempre sincronizada
 
 ## Problemas Comunes
 
-### Error de Validacion de Telefono
-Asegurate de usar exactamente 10 digitos:
+### Error de Validación de Teléfono
+Asegúrate de usar exactamente 10 dígitos:
 - Correcto: `+1234567890`
-- Incorrecto: `123456789` (solo 9 digitos)
+- Incorrecto: `123456789` (solo 9 dígitos)
 
 ### Error de Formato JSON
 Verifica que tu JSON este bien formado:
