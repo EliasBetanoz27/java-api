@@ -8,6 +8,6 @@ public class HomeController {
 
     @GetMapping("/")
     public String home() {
-        return "Users API Running 🚀";
+        return "Users API Running ";
     }
 }

@@ -8,7 +8,6 @@ public class AESUtil {
 
     private static final String ALGORITHM = "AES";
     private static final byte[] KEY = "12345678901234567890123456789012".getBytes();
-    // 32 bytes = 256 bits
 
     public static String encrypt(String value) {
         try {

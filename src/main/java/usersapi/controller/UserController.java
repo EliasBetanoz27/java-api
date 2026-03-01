@@ -1,12 +1,14 @@
 package usersapi.controller;
 
 import usersapi.model.User;
+import usersapi.dto.UserRequestDTO;
 import usersapi.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
+import jakarta.validation.Valid;
 
 import java.util.List;
 import java.util.Map;
@@ -71,8 +73,18 @@ public class UserController {
     // POST /users
     // =============================
     @PostMapping
-    public ResponseEntity<?> createUser(@Parameter(description = "User object to be created") @RequestBody User user) {
+    public ResponseEntity<?> createUser(@Valid @RequestBody UserRequestDTO userRequest) {
         try {
+            User user = User.builder()
+                    .email(userRequest.getEmail())
+                    .name(userRequest.getName())
+                    .phone(userRequest.getPhone())
+                    .password(userRequest.getPassword())
+                    .taxId(userRequest.getTaxId())
+                    .createdAt(java.time.LocalDateTime.now())
+                    .addresses(userRequest.getAddresses())
+                    .build();
+            
             Map<String, Object> result = service.createUser(user);
             return ResponseEntity.ok(result);
         } catch (RuntimeException e) {
