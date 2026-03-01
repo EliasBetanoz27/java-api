@@ -1,7 +1,5 @@
 package usersapi.model;
-
 import lombok.*;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.time.LocalDateTime;

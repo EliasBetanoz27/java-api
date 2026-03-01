@@ -3,6 +3,7 @@ package usersapi.service;
 import usersapi.model.User;
 import usersapi.repository.UserRepository;
 import usersapi.util.AESUtil;
+import usersapi.dto.UserUpdateDTO;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.http.HttpStatus;
@@ -74,6 +75,47 @@ public class UserService {
         repository.delete(user);
     }
 
+   public void updateUser(UUID id, UserUpdateDTO userUpdate) {
+
+        User user = repository.findById(id)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        // Update only if the field is provided and not empty
+        if (userUpdate.getName() != null && !userUpdate.getName().trim().isEmpty()) {
+            if (user.getName().equals(userUpdate.getName())) {
+                throw new RuntimeException("User name not updated, name is the same");
+            }
+            user.setName(userUpdate.getName());
+        }
+
+        if (userUpdate.getEmail() != null && !userUpdate.getEmail().trim().isEmpty()) {
+            if (user.getEmail().equals(userUpdate.getEmail())) {
+                throw new RuntimeException("User email not updated, email is the same");
+            }
+            user.setEmail(userUpdate.getEmail());
+        }
+
+        if (userUpdate.getPhone() != null && !userUpdate.getPhone().trim().isEmpty()) {
+            if (user.getPhone().equals(userUpdate.getPhone())) {
+                throw new RuntimeException("User phone not updated, phone is the same");
+            }
+
+            String cleaned = userUpdate.getPhone().replaceAll("\\s+", "");
+            if (!cleaned.matches("^(\\+\\d{1,3})?\\d{10}$")) {
+                throw new RuntimeException("Phone number must contain 10 digits and may include country code");
+            }
+            user.setPhone(userUpdate.getPhone());
+        }
+
+        if (userUpdate.getPassword() != null && !userUpdate.getPassword().trim().isEmpty()) {
+            if (AESUtil.encrypt(userUpdate.getPassword()).equals(user.getPassword())) {
+                throw new RuntimeException("User password not updated, password is the same");
+            }
+            user.setPassword(AESUtil.encrypt(userUpdate.getPassword()));
+        }
+
+        repository.save(user);
+    }
     // =============================
     // LOGIN
     // =============================
@@ -96,6 +138,7 @@ public class UserService {
     private List<User> applyFilter(List<User> users, String filter) {
 
         String[] parts = filter.replace(" ", "+").split("\\+");
+
 
         if (parts.length != 3) {
             throw new ResponseStatusException(
@@ -123,6 +166,10 @@ public class UserService {
             case "created_at" -> user.getCreatedAt().toString();
             default -> "";
         };
+
+        // Convert to lowercase for case-insensitive comparison
+        fieldValue = fieldValue.toLowerCase();
+        value = value.toLowerCase();
 
         return switch (operator) {
             case "co" -> fieldValue.contains(value);

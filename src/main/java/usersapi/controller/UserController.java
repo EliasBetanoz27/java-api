@@ -2,6 +2,7 @@ package usersapi.controller;
 
 import usersapi.model.User;
 import usersapi.dto.UserRequestDTO;
+import usersapi.dto.UserUpdateDTO;
 import usersapi.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -40,12 +41,13 @@ public class UserController {
                     - tax_id
                     - created_at
                     """, examples = {
+                    @ExampleObject(name = "No sort", value = ""),
+                    @ExampleObject(name = "Sort by tax id", value = "tax_id"),
                     @ExampleObject(name = "Sort by name", value = "name"),
                     @ExampleObject(name = "Sort by email", value = "email"),
                     @ExampleObject(name = "Sort by creation date", value = "created_at"),
-                    @ExampleObject(name = "Sort by tax id", value = "tax_id")
-            })
-            @RequestParam(required = false) String sortedBy,
+                    @ExampleObject(name = "Sort by tax id", value = "tax_id"),
+            }) @RequestParam(required = false) String sortedBy,
             @Parameter(description = """
                     Dynamic filter using format: field+operator+value
 
@@ -60,11 +62,14 @@ public class UserController {
                     email+ew+mail.com
                     phone+sw+555
                     tax_id+eq+AARR990101XXX
+                    none (no filter)
                     """, examples = {
+                    @ExampleObject(name = "No filter", value = ""),
                     @ExampleObject(name = "Contains example", value = "name+co+user"),
                     @ExampleObject(name = "Ends with example", value = "email+ew+mail.com"),
                     @ExampleObject(name = "Starts with example", value = "phone+sw+555"),
-                    @ExampleObject(name = "Equals example", value = "tax_id+eq+AARR990101XXX")
+                    @ExampleObject(name = "Equals example", value = "tax_id+eq+AARR990101XXX"),
+
             }) @RequestParam(required = false) String filter) {
         return service.getUsers(sortedBy, filter);
     }
@@ -84,7 +89,7 @@ public class UserController {
                     .createdAt(java.time.LocalDateTime.now())
                     .addresses(userRequest.getAddresses())
                     .build();
-            
+
             Map<String, Object> result = service.createUser(user);
             return ResponseEntity.ok(result);
         } catch (RuntimeException e) {
@@ -101,6 +106,27 @@ public class UserController {
     @DeleteMapping("/{id}")
     public void deleteUser(@PathVariable UUID id) {
         service.deleteUser(id);
+    }
+
+    // =============================
+    // PUT /users/{id}
+    // =============================
+    @PutMapping("/{id}")
+    public ResponseEntity<?> updateUser(@PathVariable UUID id, @Valid @RequestBody UserUpdateDTO userUpdate) {
+        try {
+            service.updateUser(id, userUpdate);
+            
+            Map<String, Object> response = new HashMap<>();
+            response.put("status", "success");
+            response.put("message", "User updated successfully");
+            return ResponseEntity.ok(response);
+            
+        } catch (RuntimeException e) {
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("status", "error");
+            errorResponse.put("message", e.getMessage());
+            return ResponseEntity.badRequest().body(errorResponse);
+        }
     }
 
     // =============================
