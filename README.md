@@ -1,7 +1,7 @@
 # Users API
 
 Una REST API para gestionar usuarios con validaciones, autenticación y operaciones CRUD completas.
-
+Git history included in the repository.
 ## Características
 
 - CRUD completo de usuarios (Crear, Leer, Actualizar, Eliminar)
